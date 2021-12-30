@@ -1,6 +1,6 @@
 import csv
 from pathlib import Path
-from tqdm import tqdm  # used to create a progress bar while doing the for loop
+from tqdm import tqdm
 
 # Setting the file paths for the data files to be analyzed
 menu_filepath = Path("Resources/menu_data.csv")
@@ -25,30 +25,35 @@ with open(sales_filepath, "r") as csv_file:
     # loop through the lines in the csv to store in to the menu list
     for row in sales_data:
         sales.append(row)
-
 # @TODO: Initialize dict object to hold our key-value pairs of items and metrics
-result = {}
+report = {}
 
 # Initialize a row counter variable
 row_count = 0
 
 # @TODO: Loop over every row in the sales list object
 
-for row in tqdm(sales):
-
+for row in  tqdm(sales):
+    
     # Line_Item_ID,Date,Credit_Card_Number,Quantity,Menu_Item
     # @TODO: Initialize sales data variables
     quantity = int(row[3])
     menu_item = row[4]
-
+    
+    
     # @TODO:
     # If the item value not in the report, add it as a new entry with initialized metrics
     # Naming convention allows the keys to be ordered in logical fashion, count, revenue, cost, profit
-    if menu_item not in result.keys():
-        result[menu_item] = {"count": 0, "revenue": 0, "cogs": 0, "profit": 0}
+    if menu_item not in report.keys():
+        report[menu_item]= {
+            "count":0,
+            "revenue":0,
+            "cogs":0,
+            "profit":0
+        }
 
     # @TODO: For every row in our sales data, loop over the menu records to determine a match
-    for row in menu:
+    for row in (menu):
         # Item,Category,Description,Price,Cost
         # @TODO: Initialize menu data variables
         item = row[0]
@@ -60,38 +65,33 @@ for row in tqdm(sales):
         # @TODO: If the item value in our sales data is equal to the any of the items in the menu, then begin tracking metrics for that item
         if menu_item == item:
             # @TODO: Print out matching menu data
-            # save a dict of the matched items to be printed in summary
-            matched_items = {
-                "item": item,
-                "price": price,
-                "cost": cost,
-                "profit": profit,
-            }
-            # print(f"Found a match /n Item: {item} /n Price: {price} /n Cost: {cost} /n Profit: {profit}")
+            #print(f"Found a match /n Item: {item} /n Price: {price} /n Cost: {cost} /n Profit: {profit}")
             # @TODO: Cumulatively add up the metrics for each item key
-            result[menu_item]["count"] += quantity
-            result[menu_item]["revenue"] += price * quantity
-            result[menu_item]["cogs"] += cost * quantity
-            result[menu_item]["profit"] += profit * quantity
+            report[menu_item]["count"]+=quantity
+            report[menu_item]["revenue"]+=price * quantity
+            report[menu_item]["cogs"]+= cost * quantity
+            report[menu_item]["profit"]+= profit * quantity
 
         # @TODO: Else, the sales item does not equal any fo the item in the menu data, therefore no match
-        # else:
-        # print(f"{item} does not match any item in the menu ")
-
+        #else:
+            #print(f"{item} does not match any item in the menu ")
     # @TODO: Increment the row counter by 1
-    row_count += 1
+    row_count+=1
 
 # @TODO: Print total number of records in sales data
-# printing the summary after the progress bar completes
 print(f"the total number of records are {row_count}")
-for i in matched_items:
-    print(f"the matched items are below: \n {matched_items}")
+# @TODO: Write out report to a text file (won't appear on the command line output)
+
+
 
 # @TODO: Write out report to a text file (won't appear on the command line output)
 
-results_path = Path("results/output.csv")
-with open(results_path, "w") as csvout:
-    for key, value in result.items():
-        row = "%s %s \n" % (key, value)
+results_path = Path('results/output.csv')
+with open (results_path,'w') as csvout :
+    for key,value in report.items():
+        row = "%s %s \n" %(key,value)
         csvout.write(row)
+        
+
+
 
